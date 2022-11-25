@@ -70,16 +70,19 @@ async function replyPOST(req, res) {
     console.log("Rpost", req.body);
     const { thread_id, text, delete_password } = req.body;
     const board = req.params.board;
+
+    const date = new Date();
     const newReply = new mReply({
         text: text,
         delete_password: delete_password,
+        created_on: date,
     });
     let boardData = await findBoard(board);
     if (!boardData) {
         res.json({ error: "Board not found" });
         return
     }
-    const date = new Date();
+   
     let threadToAddReply = boardData.threads.id(thread_id);
     if (threadToAddReply === null) {
         res.json({ error: " not found" });
