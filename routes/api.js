@@ -75,11 +75,12 @@ async function threadsGET(req, res) {
     });
     threads.length = Math.min(threads.length, 10);
     threads.map(function(e){
-        e.replies.length = Math.min(threads.length, 3);
+        e.replycount = e.replies.length;
+        e.replies = e.replies.slice( -1 * Math.min(e.replies.length, 3)) ;
+        
     });
     
     res.json(threads);
-    res.redirect(`/b/${board}`)
 }
 
 async function threadsGETRest(req, res) {
@@ -135,6 +136,7 @@ module.exports = function (app) {
 
     app.route('/api/replies/:board?thread_id=:thread_id')
         .get(threadsGETRest);
+
     app.route('/api/replies/:board')
         .post((req, res) => {
             console.log("thread", req.body);
@@ -153,7 +155,7 @@ module.exports = function (app) {
                     threadToAddReply.bumped_on = date;
                     threadToAddReply.replies.push(newReply);
                     boardData.save((err, updatedData) => {
-                        res.json(updatedData)
+                        
                     });
                 }
 
