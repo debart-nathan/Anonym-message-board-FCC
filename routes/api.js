@@ -62,34 +62,22 @@ async function threadsPOST(req, res) {
 
 async function threadsGET(req, res) {
     const board = req.params.board;
-    let boardData = await fidnBoard(board);
+    let boardData = await findBoard(board);
     if (!boardData) {
         console.log("No board with this name");
         res.send("No board with this name")
         return;
     }
-    const threads = boardData.threads.map((thread) => {
-        const {
-            _id,
-            text,
-            created_on,
-            bumped_on,
-            reported,
-            delete_password,
-            replies,
-        } = thread;
-        return {
-            _id,
-            text,
-            created_on,
-            bumped_on,
-            reported,
-            delete_password,
-            replies,
-            replycount: thread.replies.length,
-        };
-
+    const threads = boardData.threads.sort((a,b)=>{
+        if (a.created_on<b.created_on){
+            return -1;
+        }
     });
+    threads.length = Math.min(threads.length, 10);
+    threads.map(function(e){
+        e.replies.length = Math.min(threads.length, 3);
+    });
+    
     res.json(threads);
     res.redirect(`/b/${board}`)
 }
@@ -171,9 +159,9 @@ module.exports = function (app) {
 
             });
         })
-        .get((req, res) => {
+        .get(async (req, res) => {
             const board = req.params.board;
-            let data = wait findBoard(board);
+            let data = await findBoard(board);
             if (!data) {
                 res.json({ error: "Board not found" });
                 return;
