@@ -17,16 +17,19 @@ async function findBoard(board) {
 //
 
 async function threadsPOST(req, res) {
+    console.log("Tpost", req.body);
     const { text, delete_password } = req.body
     let board = req.body.board;
     if (!board) {
         board = req.params.board;
     }
-
+    const date = new Date();
     const newThread = new mThread({
         text: text,
+        created_on: date,
+        bumped_on: date,
         delete_password: delete_password,
-        replies: [],
+
     });
 
     let boardData = await findBoard(board);
@@ -64,7 +67,7 @@ async function threadsPOST(req, res) {
 }
 
 async function replyPOST(req, res) {
-    console.log("thread", req.body);
+    console.log("Rpost", req.body);
     const { thread_id, text, delete_password } = req.body;
     const board = req.params.board;
     const newReply = new mReply({
@@ -78,7 +81,7 @@ async function replyPOST(req, res) {
     }
     const date = new Date();
     let threadToAddReply = boardData.threads.id(thread_id);
-    if(threadToAddReply === null){
+    if (threadToAddReply === null) {
         res.json({ error: " not found" });
         return
     }
@@ -97,6 +100,7 @@ async function replyPOST(req, res) {
 //
 
 async function threadsGET(req, res) {
+    console.log("Tget", req.body);
     const board = req.params.board;
     let boardData = await findBoard(board);
     if (!boardData) {
@@ -105,21 +109,42 @@ async function threadsGET(req, res) {
         return;
     }
     let threads = boardData.threads.sort((a, b) => {
-        if (a.bumped_on < b.bumped_on) {
+        if (a.bumped_on > b.bumped_on) {
             return -1;
         }
     });
     threads.length = Math.min(threads.length, 10);
-    threads.map(function (e) {
-        e.replycount = e.replies.length;
-        e.replies = e.replies.slice(-1 * Math.min(e.replies.length, 3));
 
+    threads = threads.map(function (e) {
+        const {
+            _id,
+            text,
+            created_on,
+            bumped_on,
+            reported,
+            delete_password,
+        } = e;
+        const replies = e.replies.slice(-1 * Math.min(e.replies.length, 3));
+        return {
+            _id,
+            text,
+            created_on,
+            bumped_on,
+            reported,
+            delete_password,
+            replies,
+            replycount: e.replies.length,
+
+        }
     });
+
+    console.log(threads);
 
     res.json(threads);
 }
 
 async function replyGET(req, res) {
+    console.log("Rget", req.body);
     const board = req.params.board;
     let boardData = await findBoard(board);
     if (!boardData) {
@@ -134,7 +159,7 @@ async function replyGET(req, res) {
 //
 
 async function threadPUT(req, res) {
-    console.log("put", req.body)
+    console.log("Tput", req.body)
     const { report_id } = req.body;
     const board = req.param.board;
     let boardData = await findBoard(board);
@@ -152,6 +177,7 @@ async function threadPUT(req, res) {
 }
 
 async function replyPUT(req, res) {
+    console.log("Rput", req.body);
     const { thread_id, reply_id } = req.body;
     const board = req.params.board;
     let boardData = await findBoard(board);
@@ -175,7 +201,7 @@ async function replyPUT(req, res) {
 //
 
 async function threadDELETE(req, res) {
-    console.log("delete", req.body);
+    console.log("Tdelete", req.body);
     const { thread_id, delete_password } = req.body;
     const board = req.params.board;
     let boardData = await findBoard(board);
@@ -199,6 +225,7 @@ async function threadDELETE(req, res) {
 }
 
 async function replyDELETE(req, res) {
+    console.log("Rdelete", req.body);
     const { thread_id, reply_id, delete_password } = req.body;
     const board = req.params.board;
     let boardData = await findBoard(board);
@@ -212,15 +239,15 @@ async function replyDELETE(req, res) {
         res.send("Incorrect Password");
         return;
     }
-    reply.text="[deleted]"
+    reply.text = "[deleted]"
 
-    
+
     boardData.save((err, updatedData) => {
         if (err) {
             return;
         }
         res.send("Success");
-        
+
     });
 }
 

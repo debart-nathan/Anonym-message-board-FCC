@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
-const date = new Date();
+
 
 const reply_Schema = new Schema({
 	text: {type: String},
-	created_on: {type: Date, default: date},
+	created_on: {type: Date},
 	reported: {type: Boolean, default: false},
 	delete_password: {type: String},
 });
@@ -14,8 +14,8 @@ const mReply = mongoose.model("Reply", reply_Schema);
 
 const thread_Schema = new Schema({
 	text: {type: String},
-	created_on: {type: Date, default: date},
-	bumped_on: {type: Date, default: date},
+	created_on: {type: Date},
+	bumped_on: {type: Date},
 	reported: {type: Boolean, default: false},
 	delete_password: {type: String},
 	replies: {type: [reply_Schema], defautl: []},
