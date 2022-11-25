@@ -19,7 +19,7 @@ const thread_Schema = new Schema({
 	bumped_on: {type: Date, default: date},
 	reported: {type: Boolean, default: false},
 	delete_password: {type: String},
-	replies: {type: [reply_Schema]},
+	replies: {type: [reply_Schema], defautl: []},
 });
 
 mThread = mongoose.model("Thread",thread_Schema);
