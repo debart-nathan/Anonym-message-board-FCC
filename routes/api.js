@@ -236,7 +236,7 @@ module.exports = function (app) {
         .put(threadPUT)
         .delete(threadDELETE);
 
-    app.route('/api/threads/:board')
+    app.route('/api/replies/:board')
         .post(replyPOST)
         .get(replyGET)
         .put(replyPUT)
