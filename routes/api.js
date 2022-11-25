@@ -121,8 +121,6 @@ async function threadsGET(req, res) {
             text,
             created_on,
             bumped_on,
-            reported,
-            delete_password,
         } = e;
         const replies = e.replies.slice(-1 * Math.min(e.replies.length, 3));
         return {
@@ -130,8 +128,6 @@ async function threadsGET(req, res) {
             text,
             created_on,
             bumped_on,
-            reported,
-            delete_password,
             replies,
             replycount: e.replies.length,
 
