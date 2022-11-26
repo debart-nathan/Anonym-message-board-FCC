@@ -208,7 +208,7 @@ async function threadPUT(req, res) {
     reportedThread.bumped_on = date;
     boardData.save((err, data) => {
         if (!err && data) {
-            res.send("Success");
+            res.send("reported");
         }
     });
 }
@@ -228,7 +228,7 @@ async function replyPUT(req, res) {
     reply.bumped_on = new Date();
     data.save((err, data) => {
         if (!err && data) {
-            res.send("Success");
+            res.send("reported");
         }
     });
 
