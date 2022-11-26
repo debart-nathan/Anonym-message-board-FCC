@@ -199,13 +199,12 @@ async function threadPUT(req, res) {
     const board = req.params.board;
     let boardData = await findBoard(board);
     if (!boardData) {
-        res.json({ error: "Board not found" });
-        return
+        console.log({ error: "Board not found" });
+        return;
     }
 
     let reportedThread = boardData.threads.id(report_id);
     reportedThread.reported = true;
-    reportedThread.bumped_on = new Date()
     boardData.save((err, data) => {
         if (!err && data) {
             res.send("reported");
@@ -219,7 +218,7 @@ async function replyPUT(req, res) {
     const board = req.params.board;
     let boardData = await findBoard(board);
     if (!boardData) {
-        res.json({ error: "Board not found" });
+        console.log({ error: "Board not found" });
         return;
     }
     let thread = boardData.threads.id(thread_id);
