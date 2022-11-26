@@ -47,7 +47,7 @@ async function threadsPOST(req, res) {
                 console.log(err);
                 res.send("There was an error saving a new board in post");
             } else {
-                res.redirect(`/b/${board}`)
+                res.redirect(`/b/${board}/`)
             }
 
         });
@@ -60,7 +60,7 @@ async function threadsPOST(req, res) {
         if (err || !data) {
             res.send("There was an error saving in post");
         } else {
-            res.redirect(`/b/${board}`)
+            res.redirect(`/b/${board}/`)
         }
     });
 
@@ -94,7 +94,7 @@ async function replyPOST(req, res) {
         if (err || !data) {
             res.send("There was an error saving in post");
         } else {
-            res.redirect(`/b/${board}/${thread_id}`);
+            res.redirect(`/b/${board}/${thread_id}/`);
         }
     });
 }
@@ -107,7 +107,7 @@ async function threadsGET(req, res) {
     const board = req.params.board;
     let boardData = await findBoard(board);
     if (!boardData) {
-        console.log("No board with this name");
+        console.log(`No board with name : ${board} `);
         res.send("No board with this name")
         return;
     }
@@ -130,13 +130,11 @@ async function threadsGET(req, res) {
                 _id,
                 text,
                 created_on,
-                bumped_on,
             } = e;
             return {
                 _id,
                 text,
                 created_on,
-                bumped_on,
             };
 
         });
@@ -163,17 +161,31 @@ async function replyGET(req, res) {
         res.json({ error: "Board not found" });
         return;
     }
+    const targetThread= boardData.threads.id(req.query.thread_id);
     const {
         _id,
         text,
         created_on,
         bumped_on,
-    } = boardData.threads.id(req.query.thread_id);
+    } = targetThread
+    const replies=targetThread.replies.map(function(e){
+        const {
+            _id,
+            text,
+            created_on,
+        } = e;
+        return {
+            _id,
+            text,
+            created_on,
+        };
+    });
     const thread = {
         _id,
         text,
         created_on,
         bumped_on,
+        replies
     };
     res.json(thread);
 }
@@ -287,9 +299,8 @@ module.exports = function (app) {
         .delete(threadDELETE);
 
     app.route('/api/replies/:board')
-        .post(replyPOST)
         .get(replyGET)
+        .post(replyPOST)
         .put(replyPUT)
         .delete(replyDELETE);
-
 };
