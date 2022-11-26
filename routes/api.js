@@ -137,7 +137,6 @@ async function threadsGET(req, res) {
         }
     });
 
-    console.log(threads);
 
     res.json(threads);
 }
@@ -150,7 +149,18 @@ async function replyGET(req, res) {
         res.json({ error: "Board not found" });
         return;
     }
-    const thread = boardData.threads.id(req.query.thread_id);
+    const {
+        _id,
+        text,
+        created_on,
+        bumped_on,
+    }= boardData.threads.id(req.query.thread_id);
+    const thread ={
+        _id,
+        text,
+        created_on,
+        bumped_on,
+    };
     res.json(thread);
 }
 
