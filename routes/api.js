@@ -254,8 +254,10 @@ async function threadDELETE(req, res) {
 
     }
     threadToDel.remove();
-    boardData.save((err, updateData) => {
-        res.send("success");
+    boardData.save((err, data) => {
+        if (!err && data) {
+            res.send("success");
+        }
     });
 
 
@@ -279,11 +281,11 @@ async function replyDELETE(req, res) {
     reply.text = "[deleted]"
 
 
-    boardData.save((err, updatedData) => {
-        if (err) {
-            return;
+    boardData.save((err, data) => {
+        if (!err && data) {
+            res.send("success");
         }
-        res.send("success");
+        
 
     });
 }
