@@ -206,8 +206,10 @@ async function threadPUT(req, res) {
     let reportedThread = boardData.threads.id(report_id);
     reportedThread = true;
     reportedThread.bumped_on = date;
-    boardData.save((err, updateData) => {
-        res.send("Success");
+    boardData.save((err, data) => {
+        if (!err && data) {
+            res.send("Success");
+        }
     });
 }
 
@@ -224,8 +226,8 @@ async function replyPUT(req, res) {
     let reply = thread.replies.id(reply_id);
     reply.reported = true;
     reply.bumped_on = new Date();
-    data.save((err, updateData) => {
-        if (!err) {
+    data.save((err, data) => {
+        if (!err && data) {
             res.send("Success");
         }
     });
@@ -247,13 +249,13 @@ async function threadDELETE(req, res) {
 
     let threadToDel = boardData.threads.id(thread_id);
     if (!(threadToDel.delete_password === delete_password)) {
-        res.send("Incorect Password");
+        res.send("incorrect password");
         return;
 
     }
     threadToDel.remove();
     boardData.save((err, updateData) => {
-        res.send("Success");
+        res.send("success");
     });
 
 
@@ -271,7 +273,7 @@ async function replyDELETE(req, res) {
     let thread = boardData.threads.id(thread_id);
     let reply = thread.replies.id(reply_id);
     if (!(reply.delete_password === delete_password)) {
-        res.send("Incorrect Password");
+        res.send("incorrect password");
         return;
     }
     reply.text = "[deleted]"
@@ -281,7 +283,7 @@ async function replyDELETE(req, res) {
         if (err) {
             return;
         }
-        res.send("Success");
+        res.send("success");
 
     });
 }
