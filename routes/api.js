@@ -161,14 +161,14 @@ async function replyGET(req, res) {
         res.json({ error: "Board not found" });
         return;
     }
-    const targetThread= boardData.threads.id(req.query.thread_id);
+    const targetThread = boardData.threads.id(req.query.thread_id);
     const {
         _id,
         text,
         created_on,
         bumped_on,
     } = targetThread
-    const replies=targetThread.replies.map(function(e){
+    const replies = targetThread.replies.map(function (e) {
         const {
             _id,
             text,
@@ -194,7 +194,7 @@ async function replyGET(req, res) {
 //
 
 async function threadPUT(req, res) {
-    console.log("Tput", req.params,req.body)
+    console.log("Tput", req.params, req.body)
     const { report_id } = req.body;
     const board = req.params.board;
     let boardData = await findBoard(board);
@@ -206,11 +206,14 @@ async function threadPUT(req, res) {
     let reportedThread = boardData.threads.id(report_id);
     reportedThread.reported = true;
     boardData.save((err, data) => {
-        if (!err && data) {
-            res.send("reported");
+        if (err && data) {
+            console.log({ error: "could not save" });
         }
+
     });
+    res.send("reported");
 }
+
 
 async function replyPUT(req, res) {
     console.log("Rput", req.params, req.body);
@@ -225,10 +228,11 @@ async function replyPUT(req, res) {
     let reply = thread.replies.id(reply_id);
     reply.reported = true;
     boardData.save((err, data) => {
-        if (!err && data) {
-            res.send("reported");
+        if (err && data) {
+            console.log({ error: "could not save" });
         }
     });
+    res.send("reported");
 
 }
 
@@ -283,7 +287,7 @@ async function replyDELETE(req, res) {
         if (!err && data) {
             res.send("success");
         }
-        
+
 
     });
 }
