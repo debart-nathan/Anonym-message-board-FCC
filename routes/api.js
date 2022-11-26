@@ -209,9 +209,9 @@ async function threadPUT(req, res) {
         if (err && data) {
             console.log({ error: "could not save" });
         }
-
+        res.send("reported");
     });
-    res.send("reported");
+   
 }
 
 
@@ -231,9 +231,10 @@ async function replyPUT(req, res) {
         if (err && data) {
             console.log({ error: "could not save" });
         }
-    });
-    res.send("reported");
+        res.send("reported");
 
+    });
+    
 }
 
 //DELETE
@@ -250,7 +251,7 @@ async function threadDELETE(req, res) {
     }
 
     let threadToDel = boardData.threads.id(thread_id);
-    if (!(threadToDel.delete_password === delete_password)) {
+    if (threadToDel.delete_password !== delete_password) {
         res.send("incorrect password");
         return;
 
@@ -276,7 +277,7 @@ async function replyDELETE(req, res) {
     }
     let thread = boardData.threads.id(thread_id);
     let reply = thread.replies.id(reply_id);
-    if (!(reply.delete_password === delete_password)) {
+    if (reply.delete_password !== delete_password) {
         res.send("incorrect password");
         return;
     }
