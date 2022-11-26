@@ -82,7 +82,7 @@ async function replyPOST(req, res) {
         res.json({ error: "Board not found" });
         return
     }
-   
+
     let threadToAddReply = boardData.threads.id(thread_id);
     if (threadToAddReply === null) {
         res.json({ error: " not found" });
@@ -125,7 +125,21 @@ async function threadsGET(req, res) {
             created_on,
             bumped_on,
         } = e;
-        const replies = e.replies.slice(-1 * Math.min(e.replies.length, 3));
+        const replies = e.replies.slice(-1 * Math.min(e.replies.length, 3)).map(function (e) {
+            const {
+                _id,
+                text,
+                created_on,
+                bumped_on,
+            } = e;
+            return {
+                _id,
+                text,
+                created_on,
+                bumped_on,
+            };
+
+        });
         return {
             _id,
             text,
@@ -154,8 +168,8 @@ async function replyGET(req, res) {
         text,
         created_on,
         bumped_on,
-    }= boardData.threads.id(req.query.thread_id);
-    const thread ={
+    } = boardData.threads.id(req.query.thread_id);
+    const thread = {
         _id,
         text,
         created_on,
